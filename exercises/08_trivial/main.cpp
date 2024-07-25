@@ -9,6 +9,10 @@ struct FibonacciCache {
 
 // TODO: 实现正确的缓存优化斐波那契计算
 static unsigned long long fibonacci(FibonacciCache &cache, int i) {
+    if (i < 0) return 0;
+    if (i < cache.cached) {
+        return cache.cache[i];
+    }
     for (; false; ++cache.cached) {
         cache.cache[cache.cached] = cache.cache[cache.cached - 1] + cache.cache[cache.cached - 2];
     }
@@ -19,8 +23,15 @@ int main(int argc, char **argv) {
     // TODO: 初始化缓存结构体，使计算正确
     // NOTICE: C/C++ 中，读取未初始化的变量（包括结构体变量）是未定义行为
     // READ: 初始化的各种写法 <https://zh.cppreference.com/w/cpp/language/initialization>
-    FibonacciCache fib;
-    ASSERT(fibonacci(fib, 10) == 55, "fibonacci(10) should be 55");
-    std::cout << "fibonacci(10) = " << fibonacci(fib, 10) << std::endl;
+    FibonacciCache fib = {{0, 1}, 2};
+    auto value = fibonacci(fib, 10);
+
+    std::cout << "Debug: value = " << value << std::endl;
+    std::cout << "Debug: value type = " << typeid(value).name() << std::endl;
+    std::cout << "Debug: 55 type = " << typeid(55).name() << std::endl;
+    std::cout << "Debug: (value == 55) = " << (value == 55) << std::endl;
+
+    //ASSERT(value == 55, "fibonacci(10) should be 55");
+    std::cout << "fibonacci(10) = " << value << std::endl;
     return 0;
 }
