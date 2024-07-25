@@ -31,14 +31,25 @@ ColorEnum convert_by_pun(Color c) {
         ColorEnum e;
         Color c;
     };
-
-    TypePun pun;
+    // 这里类型双关的含义就是按 bit 转换成别的类型
+    // 这个在 c++ 里面也是为定义行为，所以如果函数标记为 constexpr，并且变量也是 constexpr 的话
+    // 那么这个代码没办法编译，因为不能存入 c 访问 e
+    TypePun pun {
+        .c =  c
+    };
     // TODO: 补全类型双关转换
 
     return pun.e;
 }
 
 int main(int argc, char **argv) {
+    // 下面的这种写法也能支持按 bit 转换成别的类型
+    // 但这种在没对齐的情况下写法会有问题，会出现硬件报错
+    // 用 union 的时候 c/c++ 编译器会解决这个问题
+    float a = 2.5, *p = &a;
+    std::cout << *(int *) p << std::endl // c 的写法
+              << *reinterpret_cast<int *>(p) << std::endl; // c++ 的写法
+
     ASSERT(convert_by_pun(Color::Red) == COLOR_RED, "Type punning conversion");
     ASSERT(convert_by_pun(Color::Green) == COLOR_GREEN, "Type punning conversion");
     ASSERT(convert_by_pun(Color::Yellow) == COLOR_YELLOW, "Type punning conversion");
